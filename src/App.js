@@ -1,26 +1,61 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import NavBar from "./components/NavBar";
+import Form from "./components/Form";
+import Prediction from "./components/Prediction";
+import { QUESTIONS } from "./helpers/constants";
+
 import './App.css';
 
-function App() {
+export default function App() {
+  const [questions, setAnswerToQuestion] = useState([...QUESTIONS]);
+  const [nextQuestion, setNextQuestion] = useState(0);
+  
+  const handleFormSubmit = (indexOfAnswer) => {
+    const updatedQuestion = questions.map((q, index) => {
+      if (index === nextQuestion) {
+        q.answer = indexOfAnswer;
+      }
+
+      return q;
+    });
+    // console.log(updatedQuestion);
+
+    setNextQuestion(nextQuestion + 1);
+
+    setAnswerToQuestion([
+      ...updatedQuestion
+    ]);
+  };
+
+  const resetQuestions = _ => {
+    setNextQuestion(0);
+    const updatedQuestion = questions.map(q => {
+      q.answer = 0;
+      return q;
+    });
+
+    setAnswerToQuestion([
+      ...updatedQuestion
+    ]);
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <NavBar />
+      {
+        nextQuestion === questions.length
+        ? <Prediction 
+            result={questions}
+            resetQuestions={resetQuestions}  
+          />
+        : <Form 
+            question={questions[nextQuestion]}
+            handleFormSubmit={handleFormSubmit}
+          />
+      }
+      
     </div>
   );
 }
 
-export default App;
+
