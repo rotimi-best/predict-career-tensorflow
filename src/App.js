@@ -43,7 +43,7 @@ export default function App() {
     <div className="App">
       <NavBar />
       {
-        nextQuestion === questions.length
+        nextQuestion !== questions.length
         ? <Prediction 
             result={questions}
             resetQuestions={resetQuestions}  
