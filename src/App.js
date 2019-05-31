@@ -1,15 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NavBar from "./components/NavBar";
 import Form from "./components/Form";
 import Prediction from "./components/Prediction";
 import { QUESTIONS } from "./helpers/constants";
+import { trainModel } from "./modules/trainModel";
 
 import './App.css';
 
 export default function App() {
   const [questions, setAnswerToQuestion] = useState([...QUESTIONS]);
   const [nextQuestion, setNextQuestion] = useState(0);
-  
+
+  useEffect(() => {
+    if (App.invokedOnce) {
+      return;
+    }
+
+    trainModel();
+    App.invokedOnce = true;
+  });
+
   const handleFormSubmit = (indexOfAnswer) => {
     const updatedQuestion = questions.map((q, index) => {
       if (index === nextQuestion) {
@@ -43,7 +53,7 @@ export default function App() {
     <div className="App">
       <NavBar />
       {
-        nextQuestion !== questions.length
+        nextQuestion === questions.length
         ? <Prediction 
             result={questions}
             resetQuestions={resetQuestions}  
@@ -58,4 +68,4 @@ export default function App() {
   );
 }
 
-
+App.invokedOnce = false
