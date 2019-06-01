@@ -28,7 +28,6 @@ export default function App() {
 
       return q;
     });
-    // console.log(updatedQuestion);
 
     setNextQuestion(nextQuestion + 1);
 
@@ -53,7 +52,7 @@ export default function App() {
     <div className="App">
       <NavBar />
       {
-        nextQuestion === questions.length
+        nextQuestion !== questions.length
         ? <Prediction 
             result={questions}
             resetQuestions={resetQuestions}  

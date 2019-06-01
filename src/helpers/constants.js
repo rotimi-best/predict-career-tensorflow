@@ -1,8 +1,8 @@
 module.exports = {
-  LOWERCASE_ALPH: ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
+  LOWERCASE_ALPH: ["a", " ", ",", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"],
   LABELS: [
-    "Accounts, Finance, Banking, Insurance",
     "Agriculture, Animal Husbandry, Food Processing",
+    "Accounts, Finance, Banking, Insurance",
     "Arts, Crafts, Sports",
     "Behavioural Skills",
     "Bio Informatics",
