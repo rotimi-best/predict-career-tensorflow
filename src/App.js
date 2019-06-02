@@ -1,70 +1,92 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import NavBar from "./components/NavBar";
 import Form from "./components/Form";
 import Prediction from "./components/Prediction";
-import { QUESTIONS } from "./helpers/constants";
-import { trainModel } from "./modules/trainModel";
+import { trainModel, skillToNumberArray } from "./modules/trainModel";
 
-import './App.css';
+import { dataSet } from "./helpers/dataset";
+import "./App.css";
 
 export default function App() {
-  const [questions, setAnswerToQuestion] = useState([...QUESTIONS]);
-  const [nextQuestion, setNextQuestion] = useState(0);
+  const [noOfOptions, setNoOfOptions] = useState(0);
+  const [answers, setAnswers] = useState([
+    {
+      i: "",
+      tfOption: [],
+      label: ""
+    }
+  ]);
+  const [options, setOptions] = useState([
+    {
+      option: "",
+      tfOption: [],
+      label: ""
+    }
+  ]);
 
   useEffect(() => {
     if (App.invokedOnce) {
       return;
     }
 
-    trainModel();
+    // trainModel();
+    setNextQuestion();
     App.invokedOnce = true;
   });
 
-  const handleFormSubmit = (indexOfAnswer) => {
-    const updatedQuestion = questions.map((q, index) => {
-      if (index === nextQuestion) {
-        q.answer = indexOfAnswer;
-      }
+  const setNextQuestion = _ => {
+    console.log("Question", noOfOptions);
 
-      return q;
-    });
+    let optionIndex = noOfOptions;
+    const newOptions = [];
 
-    setNextQuestion(nextQuestion + 1);
+    for (let i = 0; i < 9; i++) {
+      const option = dataSet[optionIndex].skill;
+      const tfOption = skillToNumberArray(option);
+      const label = dataSet[optionIndex].label;
 
-    setAnswerToQuestion([
-      ...updatedQuestion
-    ]);
+      newOptions.push({ option, tfOption, label });
+
+      optionIndex += 7;
+    }
+    console.log(newOptions);
+    setNoOfOptions(noOfOptions + 1);
+    setOptions(newOptions);
   };
 
-  const resetQuestions = _ => {
-    setNextQuestion(0);
-    const updatedQuestion = questions.map(q => {
-      q.answer = 0;
-      return q;
-    });
+  const handleFormSubmit = tfOption => {
+    console.log(answers.length);
+    !answers[0].i.length
+      ? setAnswers([tfOption])
+      : setAnswers([...answers, tfOption]);
 
-    setAnswerToQuestion([
-      ...updatedQuestion
+    if (noOfOptions < 7) {
+      setNextQuestion();
+    }
+  };
+
+  const startOver = () => {
+    setNoOfOptions(0);
+    setAnswers([]);
+    setOptions([
+      {
+        option: "",
+        tfOption: []
+      }
     ]);
-  }
+    setNextQuestion();
+  };
 
   return (
     <div className="App">
       <NavBar />
-      {
-        nextQuestion !== questions.length
-        ? <Prediction 
-            result={questions}
-            resetQuestions={resetQuestions}  
-          />
-        : <Form 
-            question={questions[nextQuestion]}
-            handleFormSubmit={handleFormSubmit}
-          />
-      }
-      
+      {noOfOptions >= 7 ? (
+        <Prediction answers={answers} startOver={startOver} />
+      ) : (
+        <Form options={options} handleFormSubmit={handleFormSubmit} />
+      )}
     </div>
   );
 }
 
-App.invokedOnce = false
+App.invokedOnce = false;
