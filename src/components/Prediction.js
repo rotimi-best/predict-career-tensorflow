@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import * as tfjs from "@tensorflow/tfjs";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
@@ -9,24 +9,40 @@ import { LABELS } from "../helpers/constants";
 
 export default function Prediction(props) {
   const { answers, startOver } = props;
+  const [predictions, setPredictions] = useState([]);
 
   useEffect(() => {
     async function getTrainedModel() {
-      // await trainModel()
+      // await trainModel();
       const model = await tfjs.loadLayersModel("localstorage://my-model");
-      // const choosen = dataSet[51];
+      // const choosen = dataSet[29];
       // console.log("DATASET LENGTH: ", dataSet.length);
       // console.log("Choosen", choosen);
 
       // const choosenToNumber = skillToNumberArray(choosen.skill);
-      console.log("answers", answers);
+      // const xs = tfjs.tensor([choosenToNumber]);
+
+      // const result = model.predict(xs);
+      // const index = result.argMax(1).dataSync()[0];
+      // // index.print()
+      // console.log(
+      //   "Initial label: ",
+      //   choosen.label,
+      //   "\nPredicted: ",
+      //   LABELS[index]
+      // );
+      const predictions = [];
 
       for (let answer of answers) {
         const xs = tfjs.tensor([answer.tfOption]);
 
         const result = model.predict(xs);
         const index = result.argMax(1).dataSync()[0];
-        // index.print()
+        const prediction = LABELS[index];
+        if (!predictions.includes(prediction)) {
+          predictions.push(prediction);
+        }
+
         console.log(
           "Initial label: ",
           answer.label,
@@ -34,6 +50,8 @@ export default function Prediction(props) {
           LABELS[index]
         );
       }
+
+      setPredictions(predictions);
     }
 
     getTrainedModel();
@@ -41,16 +59,17 @@ export default function Prediction(props) {
 
   return (
     <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center"
-      }}
+    // style={{
+    //   display: "flex",
+    //   alignItems: "center",
+    //   justifyContent: "center"
+    // }}
     >
       <div>
-        <Typography component="h4" variant="h3" gutterBottom>
-          Success
-        </Typography>
+        <h3>Here are the carrer fields that fits you.</h3>
+        {predictions.map((p, i) => (
+          <p key={i}>{p}</p>
+        ))}
       </div>
       <Button variant="contained" color="primary" onClick={() => startOver()}>
         Try Again

@@ -6,9 +6,9 @@ import { LOWERCASE_ALPH, LABELS } from "../helpers/constants";
 export function skillToNumberArray(skill) {
   // Stringed to numbers and then sort asc
   const skillsInNumbers = skill
-    .split('')
+    .split("")
     // .filter(s => s.trim().length)
-    .map(s =>  LOWERCASE_ALPH.indexOf(s.toLowerCase()) + 1)
+    .map(s => LOWERCASE_ALPH.indexOf(s.toLowerCase()) + 1)
     .sort((a, b) => a - b);
 
   // Convert to range 0 - 1
@@ -19,11 +19,11 @@ export function skillToNumberArray(skill) {
   //   .map(s => (s - min) / (max - min))
   //   .reduce((acc, val) => acc + val);
   // console.log("Skill to number", skill, result / max);
-  
+
   // return result / max;
 
   const total = skillsInNumbers.reduce((acc, val) => acc + val);
-  const toZeroToOne = skillsInNumbers.map(v => v / total).slice(0, 7);
+  const toZeroToOne = skillsInNumbers.map(v => v / total).slice(0, 3);
   // const toZeroToOneLength = toZeroToOne.length;
   // const noOfZeroToAdd = 23 - toZeroToOneLength;
 
@@ -34,7 +34,7 @@ export function skillToNumberArray(skill) {
   // }
   // return toZeroToOne.reduce((acc, val) => acc + val);
   return toZeroToOne;
-};
+}
 
 export async function trainModel() {
   const skills = [];
@@ -45,15 +45,22 @@ export async function trainModel() {
     skills.push(data);
 
     const label = LABELS.indexOf(d.label);
-    console.log("Lable indexof", label, d.label, "Skill length",d.skill, data.length);
+    // console.log(
+    //   "Lable indexof",
+    //   label,
+    //   d.label,
+    //   "Skill length",
+    //   d.skill,
+    //   data.length
+    // );
     labels.push(label);
   }
 
   const xs = tfjs.tensor2d(skills);
   console.log(xs.shape);
 
-  const labelTensor = tfjs.tensor1d(labels, 'int32');
-  
+  const labelTensor = tfjs.tensor1d(labels, "int32");
+
   const ys = tfjs.oneHot(labelTensor, 9);
   console.log(ys.shape);
   labelTensor.dispose();
@@ -63,44 +70,42 @@ export async function trainModel() {
 
   const model = tfjs.sequential();
   const hidden = tfjs.layers.dense({
-    units: 21,
-    activation: 'sigmoid',
-    inputDim: 7
+    units: 9,
+    activation: "sigmoid",
+    inputDim: 3
   });
 
   const output = tfjs.layers.dense({
     units: 9,
-    activation: 'softmax'
+    activation: "softmax"
   });
 
   model.add(hidden);
   model.add(output);
 
-  const lr = 0.5;
+  const lr = 0.2;
   const optimizer = tfjs.train.sgd(lr);
 
   model.compile({
     optimizer,
-    loss: 'categoricalCrossentropy'
+    loss: "categoricalCrossentropy"
   });
 
   const options = {
-    epochs: 20,
+    epochs: 400,
     shuffle: true,
     validationSplit: 0.1,
     callbacks: {
       // onTrainBegin: () => console.log('Training began'),
       // onTrainEnd: () => console.log('Training complete'),
-      onBatchEnd: tfjs.nextFrame,
+      onBatchEnd: tfjs.nextFrame
       // onEpochEnd: (num, logs) => console.log('Num', num, 'Loss', logs.loss)
     }
   };
 
   const res = await model.fit(xs, ys, options);
-  console.log("LOSS: ",res.history.loss);
+  console.log("LOSS: ", res.history.loss);
 
   // return model;
-  await model.save('localstorage://my-model');
-};
-
-
+  await model.save("localstorage://my-model");
+}
