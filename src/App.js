@@ -2,20 +2,14 @@ import React, { useState, useEffect } from "react";
 import NavBar from "./components/NavBar";
 import Form from "./components/Form";
 import Prediction from "./components/Prediction";
-import { trainModel, skillToNumberArray } from "./modules/trainModel";
+import { skillToNumberArray } from "./modules/trainModel";
 
 import { dataSet } from "./helpers/dataset";
 import "./App.css";
 
 export default function App() {
   const [noOfOptions, setNoOfOptions] = useState(0);
-  const [answers, setAnswers] = useState([
-    {
-      i: "",
-      tfOption: [],
-      label: ""
-    }
-  ]);
+  const [answers, setAnswers] = useState([]);
   const [options, setOptions] = useState([
     {
       option: "",
@@ -26,6 +20,9 @@ export default function App() {
 
   useEffect(() => {
     if (App.invokedOnce) {
+      if (noOfOptions === 0) {
+        setNextQuestion();
+      }
       return;
     }
 
@@ -34,10 +31,10 @@ export default function App() {
     App.invokedOnce = true;
   });
 
-  const setNextQuestion = _ => {
-    console.log("Question", noOfOptions);
+  const setNextQuestion = reset => {
+    console.log("All answers", answers);
 
-    let optionIndex = noOfOptions;
+    let optionIndex = reset ? 0 : noOfOptions;
     const newOptions = [];
 
     for (let i = 0; i < 9; i++) {
@@ -49,41 +46,36 @@ export default function App() {
 
       optionIndex += 7;
     }
-    console.log(newOptions);
+
     setNoOfOptions(noOfOptions + 1);
+    console.log("Next Question", noOfOptions);
     setOptions(newOptions);
   };
 
   const handleFormSubmit = tfOption => {
-    console.log(answers.length);
-    !answers[0].i.length
-      ? setAnswers([tfOption])
-      : setAnswers([...answers, tfOption]);
+    console.log("Current question", noOfOptions);
 
     if (noOfOptions < 7) {
+      setAnswers([...answers, tfOption]);
       setNextQuestion();
+    } else {
+      setAnswers([...answers, tfOption]);
     }
   };
 
   const startOver = () => {
     setNoOfOptions(0);
     setAnswers([]);
-    setOptions([
-      {
-        option: "",
-        tfOption: []
-      }
-    ]);
-    setNextQuestion();
+    setOptions([]);
   };
 
   return (
     <div className="App">
       <NavBar />
-      {noOfOptions >= 7 ? (
-        <Prediction answers={answers} startOver={startOver} />
-      ) : (
+      {answers.length < 7 ? (
         <Form options={options} handleFormSubmit={handleFormSubmit} />
+      ) : (
+        <Prediction answers={answers} startOver={startOver} />
       )}
     </div>
   );

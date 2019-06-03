@@ -2,10 +2,10 @@ import React, { useEffect } from "react";
 import * as tfjs from "@tensorflow/tfjs";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import { skillToNumberArray, trainModel } from "../modules/trainModel";
+// import { skillToNumberArray, trainModel } from "../modules/trainModel";
 
-import { dataSet } from "../helpers/dataset";
-import { LOWERCASE_ALPH, LABELS } from "../helpers/constants";
+// import { dataSet } from "../helpers/dataset";
+import { LABELS } from "../helpers/constants";
 
 export default function Prediction(props) {
   const { answers, startOver } = props;
@@ -37,7 +37,7 @@ export default function Prediction(props) {
     }
 
     getTrainedModel();
-  }, []);
+  }, [answers]);
 
   return (
     <div
