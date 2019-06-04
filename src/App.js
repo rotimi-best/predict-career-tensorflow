@@ -26,7 +26,7 @@ export default function App() {
       return;
     }
 
-    // trainModel();
+    trainModel();
     setNextQuestion();
     App.invokedOnce = true;
   });
