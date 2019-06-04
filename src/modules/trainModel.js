@@ -23,7 +23,7 @@ export function skillToNumberArray(skill) {
   // return result / max;
 
   const total = skillsInNumbers.reduce((acc, val) => acc + val);
-  const toZeroToOne = skillsInNumbers.map(v => v / total).slice(0, 3);
+  const toZeroToOne = skillsInNumbers.map(v => v / total).slice(0, 5);
   // const toZeroToOneLength = toZeroToOne.length;
   // const noOfZeroToAdd = 23 - toZeroToOneLength;
 
@@ -70,9 +70,9 @@ export async function trainModel() {
 
   const model = tfjs.sequential();
   const hidden = tfjs.layers.dense({
-    units: 9,
+    units: 25,
     activation: "sigmoid",
-    inputDim: 3
+    inputDim: 5
   });
 
   const output = tfjs.layers.dense({
@@ -92,14 +92,14 @@ export async function trainModel() {
   });
 
   const options = {
-    epochs: 400,
+    epochs: 5000,
     shuffle: true,
     validationSplit: 0.1,
     callbacks: {
-      // onTrainBegin: () => console.log('Training began'),
-      // onTrainEnd: () => console.log('Training complete'),
-      onBatchEnd: tfjs.nextFrame
-      // onEpochEnd: (num, logs) => console.log('Num', num, 'Loss', logs.loss)
+      onTrainBegin: () => console.log('Training began'),
+      onTrainEnd: () => console.log('Training complete'),
+      onBatchEnd: tfjs.nextFrame,
+      onEpochEnd: (num, logs) => console.log('Num', num, 'Loss', logs.loss)
     }
   };
 

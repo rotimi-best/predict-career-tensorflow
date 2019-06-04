@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import NavBar from "./components/NavBar";
 import Form from "./components/Form";
 import Prediction from "./components/Prediction";
-import { skillToNumberArray } from "./modules/trainModel";
+import { skillToNumberArray, trainModel } from "./modules/trainModel";
 
 import { dataSet } from "./helpers/dataset";
 import "./App.css";

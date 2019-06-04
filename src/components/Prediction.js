@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import * as tfjs from "@tensorflow/tfjs";
-import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 // import { skillToNumberArray, trainModel } from "../modules/trainModel";
 
