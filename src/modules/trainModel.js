@@ -92,7 +92,7 @@ export async function trainModel() {
   });
 
   const options = {
-    epochs: 5000,
+    epochs: 500,
     shuffle: true,
     validationSplit: 0.1,
     callbacks: {
